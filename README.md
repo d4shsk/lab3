@@ -265,3 +265,83 @@ int main() {
 ```
 ### Результаты выполненной работы
 [![image.png](https://i.postimg.cc/B6w0d4z9/image.png)](https://postimg.cc/mzMJ9fR8)
+## 1.5
+### Задача
+Реализовать в виде структур двунаправленный связный список и совершить отдельно его обход в прямом и обратном направлениях с распечаткой значений каждого элемента списка.
+### Математическая модель
+--
+### Список идентификаторов
+| Имя      | Тип           | Смысл                                           |
+| -------- | ------------- | ----------------------------------------------- |
+| Node     | struct Node   | Описание структуры узла двунаправленного списка |
+| data     | int           | Поле данных в узле                              |
+| prev     | struct Node * | Указатель на предыдущий узел                    |
+| next     | struct Node * | Указатель на следующий узел                     |
+| new_node | Node *        | адрес нового узла                               |
+| value    | int           | значение для data в новом узле                  |
+| first    | Node *        | Указатель на первый узел списка                 |
+| second   | Node *        | Указатель на второй узел списка                 |
+| third    | Node *        | Указатель на третий узел                        |
+| tail     | Node *        | Указатель на последний узел списка              |
+| curr     | Node *        | Временный указатель для обхода списка           |
+| next     | Node *        | Временный указатель при освобождении памяти     |
+### Код программы
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;  
+} Node;
+
+Node* create_node(int value) {
+    Node* new_node = malloc(sizeof(Node));
+    if (!new_node) {
+        perror("malloc failed");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = value;
+    new_node->prev = new_node->next = NULL;
+    return new_node;
+}
+
+int main() {
+    Node* first   = create_node(1);
+    Node* second = create_node(2);
+    Node* third  = create_node(3);
+
+    first->next    = second;
+    second->prev  = first;
+    second->next  = third;
+    third->prev   = second;
+
+    Node* tail = third;
+
+    printf("Direct:\n");
+    Node* curr = first;
+    while (curr) {
+        printf("%d\n", curr->data);
+        curr = curr->next;
+    }
+
+    printf("Reverse:\n");
+    curr = tail;
+    while (curr) {
+        printf("%d\n", curr->data);
+        curr = curr->prev;
+    }
+
+    curr = first;
+    while (curr) {
+        Node* next = curr->next;
+        free(curr);
+        curr = next;
+    }
+
+    return 0;
+}
+```
+### Результаты выполненной работы
+[![image.png](https://i.postimg.cc/Px17MhkQ/image.png)](https://postimg.cc/34J9KsNk)
