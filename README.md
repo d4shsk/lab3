@@ -137,8 +137,8 @@ int main() {
 ### Результаты выполненной работы
 [![image.png](https://i.postimg.cc/GmBcr8C7/image.png)](https://postimg.cc/gxW9H0r8)
 
-## Задача 1.3
-### Постановка задачи
+## 1.3
+### Задача
 Вычислить, используя структуру комплексного числа, комплексную экспоненту exp(z) некоторого z принадлежит C:
 ### Математическая модель
 $$
@@ -234,3 +234,34 @@ int main() {
 ```
 ### Результаты выполненной работы
 [![image.png](https://i.postimg.cc/bwR47qGC/image.png)](https://postimg.cc/CRzvDTsk)
+## 1.4
+### Задача
+Используя так называемые "битовые" поля в структуре C, создать экономную структуру в оперативной памяти для заполнения даты некоторого события, например даты рождения человека.
+### Математическая модель
+--
+### Список идентификаторов
+| Имя       | Тип          | Смысл                                          |
+| --------- | ------------ | ---------------------------------------------- |
+| birth_day | struct       | Описывает формат хранения даты                 |
+| bd        | BirthDate    | Экземпляр структуры — конкретная дата рождения |
+| day       | unsigned int | день                                           |
+| month     | unsigned int | месяц                                          |
+| year      | unsigned int | год                                            |
+### Код программы
+```C
+#include <stdio.h>
+
+typedef struct {
+    unsigned int day   : 5; 
+    unsigned int month : 4; 
+    unsigned int year  : 12;
+} birth_day;
+
+int main() {
+    birth_day bd = { .day = 12, .month = 9, .year = 2006 };
+    printf("Date: %u.%u.%u\n", bd.day, bd.month, bd.year);
+    return 0;
+}
+```
+### Результаты выполненной работы
+[![image.png](https://i.postimg.cc/B6w0d4z9/image.png)](https://postimg.cc/mzMJ9fR8)
