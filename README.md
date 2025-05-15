@@ -136,3 +136,101 @@ int main() {
 ```
 ### Результаты выполненной работы
 [![image.png](https://i.postimg.cc/GmBcr8C7/image.png)](https://postimg.cc/gxW9H0r8)
+
+## Задача 1.3
+### Постановка задачи
+Вычислить, используя структуру комплексного числа, комплексную экспоненту exp(z) некоторого z принадлежит C:
+### Математическая модель
+$$
+e^z = \sum_{n=0}^{\infty} \frac{z^n}{n!} = 1 + z + \frac{z^2}{2!} + \frac{z^3}{3!} + \ldots
+$$
+### Список идентификаторов
+| Имя     | Тип     | Смысл                                              |
+| ------- | ------- | -------------------------------------------------- |
+| Complex | struct  | Тип структуры для представления комплексного числа |
+| real    | double  | Действительная часть комплексного числа            |
+| imag    | double  | Мнимая часть комплексного числа                    |
+| z       | Complex | Входное комплексное число                          |
+| e       | double  | Точность вычислений                                |
+| result  | Complex | Результат вычисления                               |
+| term    | Complex | Текущий член ряда в complex_exp                    |
+| sum     | Complex | Накопленная сумма ряда в complex_exp               |
+| m       | double  | Модуль текущего члена ряда для проверки точности   |
+| n       | int     | Счётчик итераций в циклах                          |
+| a, b    | Complex | Параметры функций complex_add, complex_mul         |
+| i       | int     | Итерационная переменная в циклах                   |
+### Код программы
+```C
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double real;
+    double imag;
+} Complex;
+
+Complex complex_add(Complex a, Complex b) {
+    Complex result;
+    result.real = a.real + b.real;
+    result.imag = a.imag + b.imag;
+    return result;
+}
+
+Complex complex_multiply(Complex a, Complex b) {
+    Complex result;
+    result.real = a.real * b.real - a.imag * b.imag;
+    result.imag = a.real * b.imag + a.imag * b.real;
+    return result;
+}
+
+Complex complex_pow(Complex z, int n) {
+    Complex result = {1.0, 0.0};
+    for (int i = 0; i < n; i++) {
+        result = complex_multiply(result, z);
+    }
+    return result;
+}
+
+unsigned long long factorial(int n) {
+    unsigned long long fact = 1;
+    for (int i = 2; i <= n; i++) {
+        fact *= i;
+    }
+    return fact;
+}
+
+Complex complex_exp(Complex z, double e) {
+    Complex sum = {1.0, 0.0};
+    Complex term = {1.0, 0.0}; 
+
+    for (int n = 1; ; n++) {
+        term = complex_multiply(term, z);
+        term.real /= n;
+        term.imag /= n;
+
+        double m = sqrt(term.real * term.real + term.imag * term.imag);
+        if (m < e) break;
+
+        sum = complex_add(sum, term);
+    }
+
+    return sum;
+}
+
+void print_complex(Complex z) {
+    printf("%.4f %+.4fi\n", z.real, z.imag);
+}
+int main() {
+
+    Complex z = {1.0, 2.0};
+    double e = 1e-6;
+
+    Complex result = complex_exp(z, e);
+
+    printf("\nexp(1 + 2i) ≈ ");
+    print_complex(result);
+    return 0;
+}
+```
+### Результаты выполненной работы
+[![image.png](https://i.postimg.cc/bwR47qGC/image.png)](https://postimg.cc/CRzvDTsk)
