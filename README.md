@@ -434,8 +434,8 @@ int main() {
 ### Результаты выполненной работы
 [![image.png](https://i.postimg.cc/63NsrS29/image.png)](https://postimg.cc/f35gZ8fF)
 
-## Задача 2.3
-### Постановка задачи
+## 2.3
+### Задача
 Создайте перечислимый тип данных (enum) для семи дней недели и распечатайте на экране его значения, как целые числа
 ### Математическая модель
 --
@@ -475,9 +475,109 @@ int main() {
 ### Результаты выполненной работы
 [![image.png](https://i.postimg.cc/TPMNFbR0/image.png)](https://postimg.cc/759NTfJJ)
 
-## Задача 2.4
-### Постановка задачи
+## 2.4
+### Задача
 Создайте так называемое размеченное объединение union, которое заключено в виде поля структуры struct вместе с ещё одним полем, которое является перечислением епиm и служит индикатором того, что именно на текущий момент хранится в таком вложенном объединении. Создать и заполнить динамический массив таких структур с объединениями внутри, заполняя вспомогательное поле перечисления еnum для сохранения информации о хранимом в каждом размеченном объединении типе данных. Реализовать распечатку данных массива таких структур в консоль.
 ### Математическая модель
 --
 ### Список идентификаторов
+| Имя         | Тип          | Смысл                                                |
+| ----------- | ------------ | ---------------------------------------------------- |
+| DataType    | enum         | Тег, указывающий на текущий вариант в DataValue      |
+| TYPE_INT    | enum         | Вариант int                                          |
+| TYPE_FLOAT  | enum         | Вариант float                                        |
+| TYPE_STRING | enum         | Вариант char*                                        |
+| DataValue   | union        | Объединение для хранения одного из трёх типов        |
+| i           | int          | Целочисленное значение                               |
+| f           | float        | Значение с плавающей точкой                          |
+| s           | char*        | Указатель на строку                                  |
+| TaggedData  | struct       | "Размеченная" запись: тег + значение                 |
+| type        | DataType     | Хранит значение тега                                 |
+| data        | DataValue    | Хранит само значение                                 |
+| n           | size_t       | Количество элементов в динамическом массиве          |
+| arr         | TaggedData * | Указатель на первый элемент массива структур         |
+| idx         | size_t       | Счётчик цикла                                        |
+| buf         | char[32]     | Временный буфер для формирования строкового значения |
+### Код программы
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+} DataType;
+
+typedef union {
+    int    i; 
+    float  f;
+    char* s;
+} DataValue;
+
+
+typedef struct {
+    DataType   type;
+    DataValue  data;
+} TaggedData;
+
+int main() {
+    size_t n;
+    printf("Enter amount of elements ");
+    if (scanf("%zu", &n) != 1) return 1;
+
+    TaggedData* arr = malloc(n * sizeof * arr);
+    if (!arr) {
+        perror("malloc");
+        return 1;
+    }
+
+    for (size_t idx = 0; idx < n; idx++) {
+        switch (idx % 3) {
+        case 0:
+            arr[idx].type = TYPE_INT;
+            arr[idx].data.i = (int)(idx * 10);
+            break;
+        case 1:
+            arr[idx].type = TYPE_FLOAT;
+            arr[idx].data.f = (float)(idx) / 2.0f;
+            break;
+        case 2:
+            arr[idx].type = TYPE_STRING;
+            {
+                char buf[32];
+                snprintf(buf, sizeof buf, "str_%zu", idx);
+                arr[idx].data.s = strdup(buf);
+            }
+            break;
+        }
+    }
+
+    for (size_t idx = 0; idx < n; idx++) {
+        printf("[%zu] ", idx);
+        switch (arr[idx].type) {
+        case TYPE_INT:
+            printf("INT    = %d\n", arr[idx].data.i);
+            break;
+        case TYPE_FLOAT:
+            printf("FLOAT  = %.2f\n", arr[idx].data.f);
+            break;
+        case TYPE_STRING:
+            printf("STRING = \"%s\"\n", arr[idx].data.s);
+            break;
+        }
+    }
+
+    for (size_t idx = 0; idx < n; idx++) {
+        if (arr[idx].type == TYPE_STRING) {
+            free(arr[idx].data.s);
+        }
+    }
+    free(arr);
+
+    return 0;
+}
+```
+### Результаты выполненной работы
+[![image.png](https://i.postimg.cc/PrDctHS2/image.png)](https://postimg.cc/kBnwc03b)
