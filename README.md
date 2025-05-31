@@ -346,8 +346,8 @@ int main() {
 ### Результаты выполненной работы
 [![image.png](https://i.postimg.cc/Px17MhkQ/image.png)](https://postimg.cc/34J9KsNk)
 
-## Задача 2.1
-### Постановка задачи
+## 2.1
+### Задача
 Напишите программу, которая использует указатель на некоторое объединение union.
 ### Математическая модель
 --
@@ -389,4 +389,47 @@ int main() {
 ### Результаты выполненной работы
 [![image.png](https://i.postimg.cc/GhMyq5rW/image.png)](https://postimg.cc/YhW0S8vR)
 
+## 2.2
+### Задача
+Напишите программу, которая использует union для побайтовой распечатки типа unsigned long.
+### Математическая модель
+--
+### Список идентификаторов
+| Имя        | Тип                                  | Смысл                                                    |
+| ---------- | ------------------------------------ | -------------------------------------------------------- |
+| ULongBytes | union                                | Тип-объединение для совместного хранения value и bytes[] |
+| value      | unsigned long                        | Поле - само число                                        |
+| bytes      | unsigned char[sizeof(unsigned long)] | Поле - массив байтов, перекрывающих value                |
+| ub         | ULongBytes                           | Экземпляр объединения                                    |
+| v          | unsigned long                        | Локальная переменная для ввода и присвоения числа        |
+| u          | size_t                               | Счётчик цикла при выводе байтов                          |
+### Код программы
+```C
+#include <stdio.h>
+#include <stdlib.h>
 
+typedef union {
+    unsigned long    value;
+    unsigned char    bytes[sizeof(unsigned long)];
+} ULongBytes;
+
+int main() {
+    ULongBytes ub;
+    unsigned long v;
+
+    printf("Enter unsigned long: ");
+    scanf("%lu", &v);
+    ub.value = v;
+
+    printf("Value: %lu\n", ub.value);
+    printf("Byte-by-byte representation (%zu bytes):", sizeof(unsigned long));
+    for (size_t i = 0; i < sizeof(unsigned long); i++) {
+        printf(" %02X", ub.bytes[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+```
+### Результаты выполненной работы
+[![image.png](https://i.postimg.cc/63NsrS29/image.png)](https://postimg.cc/f35gZ8fF)
